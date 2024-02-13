@@ -1,0 +1,36 @@
+version: '3'
+services:
+  db:
+    container_name: postgres
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+  server:
+    depends_on:
+      - db
+    image: server
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      PORT: 4000
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+      POSTGRES_DB: db
+      POSTGRES_HOST: postgres
+    ports:
+      - "4000:4000"
+  frontend:
+    depends_on:
+      - server
+    image: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
